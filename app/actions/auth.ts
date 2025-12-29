@@ -69,7 +69,7 @@ export async function signupAction(formData: FormData) {
         if (existing) return { error: "Email sudah terdaftar" }
 
         // Transaction to create User + Profile
-        const newUser = await prisma.$transaction(async (tx) => {
+        const newUser = await prisma.$transaction(async (tx: any) => {
             const user = await tx.user.create({
                 data: {
                     fullName,
