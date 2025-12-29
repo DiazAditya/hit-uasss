@@ -48,7 +48,7 @@ export default async function DashboardPage() {
             }
 
             // Prepare Chart Data (Reverse to show chronological order)
-            initialChartData = logs.reverse().map(log => ({
+            initialChartData = logs.reverse().map((log: any) => ({
                 time: new Date(log.recordedAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
                 heartRate: log.heartRate,
                 temp: log.temperature,
