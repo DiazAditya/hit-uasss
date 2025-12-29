@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  patient
+  doctor
+}
+
+enum PatientStatus {
+  stable
+  observation
+  critical
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  fullName  String
+  role      Role     @default(patient)
+  createdAt DateTime @default(now())
+
+  // Relations
+  patientProfile Patient?
+  doctorProfile  Doctor?
+
+  @@map("users")
+}
+
+model Patient {
+  id            String        @id
+  user          User          @relation(fields: [id], references: [id], onDelete: Cascade)
+  dateOfBirth   DateTime
+  operationType String
+  operationDate DateTime
+  riskScore     Int           @default(0)
+  status        PatientStatus @default(stable)
+  doctorId      String?
+  doctor        Doctor?       @relation(fields: [doctorId], references: [id])
+
+  vitalLogs    VitalLog[]
+  woundEntries WoundEntry[]
+  tasks        Task[]
+
+  @@map("patients")
+}
+
+model Doctor {
+  id             String @id
+  user           User   @relation(fields: [id], references: [id], onDelete: Cascade)
+  specialization String
+  hospitalId     String
+
+  patients Patient[]
+
+  @@map("doctors")
+}
+
+model VitalLog {
+  id          String   @id @default(uuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  recordedAt  DateTime @default(now())
+  heartRate   Int
+  temperature Float
+  painLevel   Int
+  spo2        Int?
+  note        String?
+
+  @@map("vital_logs")
+}
+
+model WoundEntry {
+  id         String   @id @default(uuid())
+  patientId  String
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  recordedAt DateTime @default(now())
+  imageUrl   String
+  aiAnalysis String?  @db.Text
+
+  @@map("wound_entries")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  type        String // medication, exercise, general
+  description String
+  dueTime     String?
+  isCompleted Boolean  @default(false)
+  date        DateTime @default(now()) @db.Date
+
+  @@map("tasks")
+}
