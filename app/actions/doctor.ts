@@ -24,7 +24,7 @@ export async function searchPatientsAction(query: string) {
             take: 5
         })
 
-        return patients.map(p => ({
+        return patients.map((p: any) => ({
             id: p.id,
             name: p.user.fullName,
             email: p.user.email
@@ -109,7 +109,7 @@ export async function getDoctorPatients() {
             orderBy: { riskScore: 'desc' }
         })
 
-        return patients.map(p => ({
+        return patients.map((p: any) => ({
             id: p.id,
             name: p.user.fullName,
             age: new Date().getFullYear() - p.dateOfBirth.getFullYear(), // Approx
@@ -122,7 +122,7 @@ export async function getDoctorPatients() {
                 temp: p.vitalLogs[0].temperature,
                 pain: p.vitalLogs[0].painLevel
             } : { bpm: 0, temp: 0, pain: 0 },
-            history: p.vitalLogs.reverse().map(log => ({
+            history: p.vitalLogs.reverse().map((log: any) => ({
                 time: log.recordedAt.toLocaleDateString('id-ID', { weekday: 'short' }), // Simplified for chart
                 bpm: log.heartRate,
                 temp: log.temperature,
